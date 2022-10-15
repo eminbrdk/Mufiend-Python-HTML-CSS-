@@ -12,7 +12,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "98123rhdsqf8q9p2rqor189r"
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 Bootstrap(app)
 
 login_manager = LoginManager()
