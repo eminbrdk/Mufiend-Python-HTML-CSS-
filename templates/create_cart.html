@@ -1,0 +1,22 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %} Mufiend🎬 {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+
+{% for movie in movie_data %}
+  <a href="{{ url_for('create_cart3', movie=movie)}}"><img class="moviee" src="{{ movie['poster_url'] }}"></a>
+{% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf%}
+
+{% block title %} Mufiend {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+<div class="nothead">
+
+  <div class="headd">
+    <h3>{{ movie["title"] }} - {{ movie["year"] }}</h3>
+    <a><img class="moviee iki" src="{{ movie['poster_url'] }}"></a>
+  </div>
+
+  {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+
+    <div class="row">
+      {% for text in text_list %}
+        <div class="commentt col-lg-6">
+        <a href="{{ url_for('get_someone_profile', name=text.author.name, id=text.author.id) }}">{{text.author.name}}</a>
+        <p class="textt">{{ text.text }}</p>
+        {% if current_user.id == text.author.id %}
+            <a href="{{url_for('delete_room_text', text_id=text.id, movie=movie)}}">Delete Text</a>
+        {% endif %}
+        <br><br><br>
+        </div>
+      {% endfor %}
+    </div>
+
+
+
+
+</div>
+{% endblock %}

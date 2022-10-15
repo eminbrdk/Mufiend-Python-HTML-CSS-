@@ -1,0 +1,37 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="header">
+<table>
+<tr>
+
+  <th>
+  <div class="title"><a class="abc" href="{{ url_for('get_index') }}"><h4>Mufiend 🎬</h4></a></div>
+  </th>
+
+  <th>
+  <div class="links">
+    {% if current_user.is_authenticated == False %}
+  <a href="{{url_for('get_login')}}">Log In</a>
+  <a href="{{url_for('get_register')}}">Register</a>
+    {% else %}
+    <a href="{{url_for('get_page1')}}">Main Page</a>
+    <a href="{{url_for('get_page2')}}">Discover</a>
+    <a href="{{url_for('get_room')}}">Room</a>
+    <a href="{{ url_for('get_profile') }}">Profile</a>
+    <a href="{{url_for('get_logout')}}">Log Out</a>
+    {% endif %}
+  </div>
+  </th>
+
+</tr>
+</table>
+</div>
+{% endblock %}

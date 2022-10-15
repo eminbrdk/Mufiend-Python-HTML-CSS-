@@ -1,0 +1,24 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %} Mufiend🎬 {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+<div class="nothead">
+
+
+    <h1>Welcome Mufiend</h1>
+    <br><br>
+    <h3>A social media where you can give your opinion on Movies and see other people's opinions</h3>
+    <h4>Made by Muhammed Emin Bardakcı</h4>
+
+
+</div>
+{% endblock %}

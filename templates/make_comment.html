@@ -1,0 +1,27 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} laksklaslkaskla {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    {% for cart in all_carts %}
+        <a href="{{ url_for('get_someone_profile', name=cart.author.name, id=cart.author.id) }}">{{cart.author.name}}</a>
+        <p>{{cart.title}}</p>
+        <p>{{cart.year}}</p>
+        <p>{{cart.text}}</p>
+        <img src="{{ cart.poster_url }}">
+    {% endfor %}
+
+    {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+
+
+
+{% endblock %}

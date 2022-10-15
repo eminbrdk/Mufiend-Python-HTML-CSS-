@@ -1,0 +1,36 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Mufiend🎬 {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+<div class="nothead">
+
+  <h1>{{ someone.name }}</h1>
+    <br><br>
+    {% if not someone.id == current_user.id %}
+        {% if current_user.id in follower_id_list %}
+            <a href="{{ url_for('get_unfollow', someone_name=someone.name) }}">Unfollow</a>
+        {% else %}
+            <a href="{{ url_for('get_follow', someone_id=someone.id) }}">Follow</a>
+        {% endif %}
+    {% endif %}
+    <a href="{{ url_for('follow_info', head='followers', someone_name=someone.name) }}">{{ someone.followers |length }} Followers</a>
+    <a href="{{ url_for('follow_info', head='follows', someone_name=someone.name) }}">{{ follows_list |length }} Followed</a>
+  <br><br><br><br><br><br><br>
+
+  {% for cart in someone.carts|reverse %}
+        {% include 'cart.html' %}
+  {% endfor %}
+
+
+</div>
+{% endblock %}
