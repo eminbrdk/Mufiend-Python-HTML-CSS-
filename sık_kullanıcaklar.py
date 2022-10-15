@@ -7,7 +7,7 @@ class TakeMovie():
 
     def data_without_description(self, movie_name):
         API_URL = "https://api.themoviedb.org/3/search/movie"
-        API_KEY = "fe057624f880e42fb64f6a17f96892b4"
+        API_KEY = os.environ.get("VAR_NAME")
 
         params = {
             "api_key": API_KEY,
