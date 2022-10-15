@@ -385,8 +385,12 @@ def make_comment(cart_id):
 @app.route("/comments/<int:cart_id>")
 @login_required
 def show_comments(cart_id):
+    malum_liste = []
+    for like in current_user.likes:
+        malum_liste.append(like.cart_idd)
+
     cart = Cart.query.filter_by(id=cart_id).first()
-    return render_template("show_comments.html", cart=cart)
+    return render_template("show_comments.html", cart=cart, malum_liste=malum_liste)
 
 
 @app.route("/alkmsdakmsd/<int:comment_id>")
