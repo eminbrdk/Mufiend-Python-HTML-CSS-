@@ -12,7 +12,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///mufiend.db")
+app.config['SECRET_KEY'] = app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 Bootstrap(app)
 
 login_manager = LoginManager()
