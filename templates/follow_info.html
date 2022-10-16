@@ -18,7 +18,7 @@
 {% if head=="followers" %}
 
   {% for follower in someone.followers %}
-    <a href="{{ url_for('get_someone_profile', name=follower.name, id=follower.id) }}">{{follower.name}}</a>
+    <a href="{{ url_for('get_someone_profile', name=follower.name, id=follower.follower_id) }}">{{follower.name}}</a>
   {% endfor %}
 
 {% elif head=="follows" %}
