@@ -1,0 +1,51 @@
+{% extends 'bootstrap/base.html' %}
+{% block title %} Mufiend🎬 {% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+<div class="nothead">
+
+    <div class="headd">
+        <h3>{{ movie.title }} - {{ movie.year }}</h3>
+        <img class="moviee iki" src="{{ movie.poster_url }}">
+
+        <h3 class="lasttt">Vote:</h3>
+        <p>{{ movie.vote }}</p>
+
+        <h3 class="lasttt">Overview: </h3>
+        <p>{{ movie.overview }}</p>
+
+        <h3 class="lasttt">Genres:</h3>
+        {% for genre in movie.genres %}
+        <p>{{genre.genre_name}}</p>
+        {% endfor %}
+
+        <h3 class="lasttt">Production Companies:</h3>
+        <table class="table1">
+            <tr>
+                {% for company in movie.production_companies %}
+                    <th class="th1"><img class="comp" src="{{ company.company_poster_url }}"></th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for company in movie.production_companies %}
+                    <th class="th1"><p>{{company.company_name}}</p></th>
+                {% endfor %}
+            </tr>
+        </table>
+
+        <h3 class="lasttt">Production Countries:</h3>
+        {% for country in movie.production_countries %}
+        <p>{{country.country_name}}</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
