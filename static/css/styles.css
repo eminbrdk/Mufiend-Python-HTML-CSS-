@@ -461,9 +461,36 @@ input {
 .headd {
     text-align: left;
     margin-left: 2rem;
+    margin-right: 2rem;
 }
 
 .abc {
     color: black;
     margin: 0rem;
+}
+
+.xyz {
+    color: #678983;
+}
+
+.comp {
+    height: 4rem
+}
+
+.lasttt {
+    color: #7286D3;
+    font-size: 1.2rem;
+}
+
+.table1 {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.th1 {
+  color: white;
+  width: 150px;
+  text-align: center;
+  border: 1px;
+  padding: 5px 10px 5px 10px;
 }

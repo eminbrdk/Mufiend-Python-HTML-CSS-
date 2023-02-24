@@ -12,12 +12,12 @@
 
     <div class="cartt row col-lg-6">
         <div class="col-lg-6">
-            <img class="cartimg" src="{{ cart.poster_url }}">
+            <a href="{{ url_for('show_movie_info', cart_id=cart.id) }}"><img class="cartimg" src="{{ cart.movie.poster_url }}"></a>
         </div>
         <div>
             <a class="namee" href="{{ url_for('get_someone_profile', name=cart.author.name, id=cart.author.id) }}">{{cart.author.name}}</a>
             <br><br>
-            <p>{{cart.title}} - {{cart.year}}</p>
+            <p class="xyz">{{cart.movie.title}} - {{cart.movie.year}}</p>
             <p>{{cart.text}}</p>
             {% if not cart.id in malum_liste %}
                 <a class="namee" href="{{ url_for('get_like', cart_id=cart.id) }}">🤍</a>

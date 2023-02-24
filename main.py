@@ -12,7 +12,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap(app)
 
 login_manager = LoginManager()
@@ -51,6 +51,8 @@ class User(UserMixin, db.Model):
 
     followers = relationship("Follower", back_populates="followed")
 
+    follows = relationship("Follow", back_populates="followed")
+
     likes = relationship("Like", back_populates="liker")
 
     comments = relationship("Comment", back_populates="commenter")
@@ -69,21 +71,82 @@ class Follower(db.Model):
     followed = relationship("User", back_populates="followers")
 
 
+# Follow Table
+class Follow(db.Model):
+    __tablename__ = "follows"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(300), nullable=True)
+
+    followed_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    followed = relationship("User", back_populates="follows")
+
+
 # Cart Table
 class Cart(db.Model):
     __tablename__ = "carts"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=True)
-    year = db.Column(db.String(20), nullable=False)
-    poster_url = db.Column(db.String(100), nullable=True)
     text = db.Column(db.String, nullable=True)
 
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     author = relationship("User", back_populates="carts")
 
+    movie_id = db.Column(db.Integer, db.ForeignKey("movies.id"))
+    movie = relationship("Movie", back_populates="carts")
+
     likes = relationship("Like", back_populates="cart")
 
     comments = relationship("Comment", back_populates="cart")
+
+
+# Movie Table
+class Movie(db.Model):
+    __tablename__ = "movies"
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=True)
+    year = db.Column(db.String(20), nullable=False)
+    poster_url = db.Column(db.String(100), nullable=True)
+    overview = db.Column(db.String(10000), nullable=True)
+    vote = db.Column(db.Float, nullable=True)
+    data_id = db.Column(db.Integer, nullable=True)
+
+    carts = relationship("Cart", back_populates="movie")
+
+    genres = relationship("Genre", back_populates="movie")
+
+    production_companies = relationship("Production_Company", back_populates="movie")
+
+    production_countries = relationship("Production_Country", back_populates="movie")
+
+
+# Genre Table
+class Genre(db.Model):
+    __tablename__ = "genres"
+    id = db.Column(db.Integer, primary_key=True)
+    genre_name = db.Column(db.String(100), nullable=True)
+
+    movie_id = db.Column(db.Integer, db.ForeignKey("movies.id"))
+    movie = relationship("Movie", back_populates="genres")
+
+
+# Production Company Table
+class Production_Company(db.Model):
+    __tablename__ = "production_companies"
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(100), nullable=True)
+    company_poster_url = db.Column(db.String(300), nullable=True)
+
+    movie_id = db.Column(db.Integer, db.ForeignKey("movies.id"))
+    movie = relationship("Movie", back_populates="production_companies")
+
+
+# Production Country Table
+class Production_Country(db.Model):
+    __tablename__ = "production_countries"
+    id = db.Column(db.Integer, primary_key=True)
+    country_name = db.Column(db.String(100), nullable=True)
+
+    movie_id = db.Column(db.Integer, db.ForeignKey("movies.id"))
+    movie = relationship("Movie", back_populates="production_countries")
 
 
 # Like Table
@@ -187,7 +250,6 @@ def get_logout():
     return redirect(url_for("home"))
 
 
-# kartların gösterileceği yer olacak ve kart ekleme butonu yapılacak
 @app.route("/page1")
 @login_required
 def get_page1():
@@ -241,13 +303,48 @@ def create_cart3(movie):
     form = CartForm()
 
     if form.validate_on_submit():
-        new_cart = Cart(
+
+        detaylı_film_bilgisi = TakeMovie().data_with_movie_id(movie_id=movie["data_id"])
+        print(detaylı_film_bilgisi)
+
+        new_movie = Movie(
             title=movie["title"],
             year=movie["year"],
+            poster_url=movie["poster_url"],
+            vote=movie["vote"],
+            overview=movie["overview"],
+            data_id=movie["data_id"]
+        )
+
+        new_cart = Cart(
             text=form.text.data,
             author=current_user,
-            poster_url=movie["poster_url"]
+            movie=new_movie
         )
+
+        for genre in detaylı_film_bilgisi["genres"]:
+            new_genre = Genre(
+                genre_name=genre,
+                movie=new_movie
+            )
+            db.session.add(new_genre)
+
+        for company in detaylı_film_bilgisi["companies"]:
+            new_company = Production_Company(
+                company_name=company["company_name"],
+                company_poster_url=company["company_logo_url"],
+                movie=new_movie
+            )
+            db.session.add(new_company)
+
+        for country in detaylı_film_bilgisi["countries"]:
+            new_country = Production_Country(
+                country_name=country,
+                movie=new_movie
+            )
+            db.session.add(new_country)
+
+        db.session.add(new_movie)
         db.session.add(new_cart)
         db.session.commit()
         return redirect(url_for("get_page1"))
@@ -266,9 +363,9 @@ def get_profile():
 @login_required
 def get_someone_profile(name, id):
     someone = User.query.filter_by(id=id).first()
-    follower_id_list = []
-    for follower in someone.followers:
-        follower_id_list.append(follower.follower_id)
+    follower_list = []
+    for follow in someone.followers:
+        follower_list.append(follow.follower_id)
 
     someone = User.query.filter_by(name=someone.name).first()
     follows = Follower.query.filter_by(name=someone.name).all()
@@ -280,7 +377,7 @@ def get_someone_profile(name, id):
     for like in current_user.likes:
         malum_liste.append(like.cart_idd)
 
-    return render_template("someone_profile.html", current_user=current_user, someone=someone, follower_id_list=follower_id_list, follows_list=follows_list, malum_liste=malum_liste)
+    return render_template("someone_profile.html", current_user=current_user, someone=someone, follower_list=follower_list, follows_list=follows_list, malum_liste=malum_liste)
 
 
 # Follow *************************************************************************************************************
@@ -288,11 +385,19 @@ def get_someone_profile(name, id):
 @login_required
 def get_follow(someone_id):
     someone = User.query.filter_by(id=someone_id).first()
+
     new_follower = Follower(
         follower_id=current_user.id,
         name=current_user.name,
         followed=someone
     )
+
+    new_follow = Follow(
+        name=someone.name,
+        followed=current_user
+    )
+
+    db.session.add(new_follow)
     db.session.add(new_follower)
     db.session.commit()
     return redirect(url_for("get_someone_profile", name=someone.name, id=someone_id))
@@ -466,6 +571,14 @@ def delete_room_text(text_id, movie):
     db.session.commit()
     return redirect(url_for("get_movie_room", movie=movie))
 
+
+# movie info *********************************************************************************************************
+@app.route("/movie_info/<int:cart_id>", methods=["GET", "POST"])
+@login_required
+def show_movie_info(cart_id):
+    cart = Cart.query.filter_by(id=cart_id).first()
+    movie = cart.movie
+    return render_template("movieInfo.html", movie=movie)
 
 # main page *********************************************************************************************************
 @app.route("/index")

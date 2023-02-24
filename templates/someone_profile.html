@@ -17,7 +17,7 @@
   <h1>{{ someone.name }}</h1>
     <br><br>
     {% if not someone.id == current_user.id %}
-        {% if current_user.id in follower_id_list %}
+        {% if current_user.id in follower_list %}
             <a href="{{ url_for('get_unfollow', someone_name=someone.name) }}">Unfollow</a>
         {% else %}
             <a href="{{ url_for('get_follow', someone_id=someone.id) }}">Follow</a>
